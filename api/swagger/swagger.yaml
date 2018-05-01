@@ -49,7 +49,7 @@ paths:
     get:
       description: Returns status to the caller
       # used as the method name of the controller
-      operationId: get
+      operationId: getAll
       parameters:
         - name: key
           in: query
@@ -83,6 +83,51 @@ paths:
           description: Error
           schema:
             $ref: "#/definitions/APIErrorResponse"
+  /v1/monitor/{key}:
+    # binds a127 app logic to a route
+    x-swagger-router-controller: monitor
+    get:
+      description: Returns status to the caller
+      # used as the method name of the controller
+      operationId: get
+      parameters:
+        - name: key
+          in: path
+          description: The key of the object to retrieved
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/APIResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/APIErrorResponse"
+    delete:
+      description: Returns status to the caller
+      # used as the method name of the controller
+      operationId: del
+      parameters:
+        - name: key
+          in: path
+          description: The key of the object to retrieved
+          required: true
+          type: string
+      responses:
+        "200":
+          description: Success
+          schema:
+            # a pointer to a definition
+            $ref: "#/definitions/APIResponse"
+        # responses may fall through to errors
+        default:
+          description: Error
+          schema:
+            $ref: "#/definitions/APIErrorResponse"
   /swagger:
     x-swagger-pipe: swagger_raw
 # complex objects have schema definitions
@@ -92,7 +137,7 @@ definitions:
       key:
         type: string
       value:
-        type: string
+        type: object
   APIResponse:
     properties:
       message:

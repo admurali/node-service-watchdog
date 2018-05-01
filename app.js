@@ -8,10 +8,11 @@ const routeMap = require('routemap-express-mw');
 const bodyParser = require('body-parser');
 // Middleware that enables CORS requests
 const cors = require('cors');
-
 const SwaggerExpress = require('swagger-express-mw');
-const app = require('express')();
+const express = require('express');
 const NodeCache = require('node-cache');
+
+const app = express();
 
 module.exports = app; // for testing
 
@@ -42,9 +43,8 @@ app.use(logger.middleware());
 // mw to write elegant apis
 app.use(routeMap());
 
-
 // mw to have store
-const myCache = new NodeCache();
+const myCache = new NodeCache({ stdTTL: 6000, checkperiod: 1200 });
 app.use((req, res, next) => {
   req.cache = myCache;
   next();

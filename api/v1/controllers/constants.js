@@ -1,4 +1,6 @@
 module.exports = {
+  TTL: 6000,
+  CHECK_PERIOD: 1200,
   CACHE_KEY: 'CACHE_KEY',
   CACHE_VALUE: 'CACHE_VALUE',
 };
