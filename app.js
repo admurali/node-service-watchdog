@@ -10,14 +10,23 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const SwaggerExpress = require('swagger-express-mw');
 const express = require('express');
+
+// Adding SocketIO
+const socketIO = require('socket.io');
+const path = require('path');
+const http = require('http');
+
 const NodeCache = require('node-cache');
+const os = require('os');
+const pidusage = require('pidusage');
 
 const app = express();
 
 module.exports = app; // for testing
 
 const config = {
-  appRoot: __dirname, // required config
+  appRoot: __dirname, // required for swagger config
+  publicPath: path.join(__dirname, './public'), // require for socket io
 };
 
 // parse various different custom JSON types as JSON
@@ -50,6 +59,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// Launch swagger server
 SwaggerExpress.create(config, (err, swaggerExpress) => {
   if (err) { throw err; }
 
@@ -62,4 +72,54 @@ SwaggerExpress.create(config, (err, swaggerExpress) => {
   if (swaggerExpress.runner.swagger.paths['/hello']) {
     console.log('Swagger server is up and running');
   }
+});
+
+// Initiate socket io
+const socketApp = express();
+socketApp.use(express.static(config.publicPath));
+const server = http.createServer(socketApp);
+const io = socketIO(server);
+
+io.on('connection', (socket) => {
+  console.log('New user connected');
+
+  myCache.set(process.pid, {}, (err, success) => {
+    if (err) {
+      throw err;
+    } else if (!success) {
+      throw new Error('Unable to add self to cache');
+    } else {
+      // Compute statistics every second:
+      // => {
+      //   cpu: 10.0,            // percentage (it may happen to be greater than 100%)
+      //   memory: 357306368,    // bytes
+      //   ppid: 312,            // PPID
+      //   pid: 727,             // PID
+      //   ctime: 867000,        // ms user + system time
+      //   elapsed: 6650000,     // ms since the start of the process
+      //   timestamp: 864000000  // ms since epoch
+      // }
+      setInterval(() => {
+        pidusage(myCache.keys(), (error, stats) => {
+          console.log(stats);
+          socket.emit('status', {
+            cache: stats,
+            ram: {
+              free: os.freemem(),
+              total: os.totalmem(),
+            },
+          });
+        });
+      }, 6000);
+    }
+  });
+
+  socket.on('disconnect', () => {
+    console.log('User was disconnected');
+  });
+});
+
+const port = process.env.PORT || 10012;
+server.listen(port, () => {
+  console.log(`Socket IO server is up on ${port}`);
 });

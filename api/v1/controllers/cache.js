@@ -1,4 +1,4 @@
-const constants = require('./constants');
+const constants = require('./constants.json');
 
 function set(req) {
   return new Promise((resolve, reject) => {
@@ -66,7 +66,6 @@ function extendTTL(req) {
     });
   });
 }
-
 
 module.exports = {
   set,

@@ -1,4 +1,4 @@
-# RouteMap Boiler Project
+# Node Service Watchdog
 ## Middlewares
 * logging-express-mw -  allow routemap to log and traces functions
 * routemap-express-mw - routemap will allow a user to write elegant apis with a standardized workflow of promise that is logged and easy to debug
