@@ -100,16 +100,27 @@ io.on('connection', (socket) => {
       //   timestamp: 864000000  // ms since epoch
       // }
       setInterval(() => {
-        pidusage(myCache.keys(), (error, stats) => {
-          console.log(stats);
-          socket.emit('status', {
-            cache: stats,
-            ram: {
-              free: os.freemem(),
-              total: os.totalmem(),
-            },
+        const cache = [];
+        const requests = myCache.keys().map(item => new Promise((resolve) => {
+          pidusage(item, (error, stats) => {
+            if (error) {
+              console.log(`Got error in getting status: ${error.message}`);
+            } else {
+              cache.push(stats);
+              resolve();
+            }
           });
-        });
+        }));
+        Promise.all(requests).then(() => socket.emit('status', {
+          cache,
+          cpu: {
+            total: os.cpus().length,
+          },
+          ram: {
+            free: os.freemem(),
+            total: os.totalmem(),
+          },
+        }));
       }, 6000);
     }
   });
