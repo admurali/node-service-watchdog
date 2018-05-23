@@ -8,7 +8,6 @@ const routeMap = require('routemap-express-mw');
 const bodyParser = require('body-parser');
 // Middleware that enables CORS requests
 const cors = require('cors');
-const SwaggerExpress = require('swagger-express-mw');
 const express = require('express');
 
 // Adding SocketIO
@@ -21,7 +20,6 @@ const os = require('os');
 const pidusage = require('pidusage');
 
 const app = express();
-
 module.exports = app; // for testing
 
 const config = {
@@ -59,25 +57,18 @@ app.use((req, res, next) => {
   next();
 });
 
-// Launch swagger server
-SwaggerExpress.create(config, (err, swaggerExpress) => {
-  if (err) { throw err; }
+//  Connect all our routes to our application
+const v1Routes = require('./api/v1/routes');
 
-  // install middleware
-  swaggerExpress.register(app);
-
-  const port = process.env.PORT || 10010;
-  app.listen(port);
-
-  if (swaggerExpress.runner.swagger.paths['/hello']) {
-    console.log('Swagger server is up and running');
-  }
+app.param('id', (req, res, next, id) => {
+  console.log(`A call for ${id} originated`);
+  next();
 });
+app.use('/', v1Routes);
 
 // Initiate socket io
-const socketApp = express();
-socketApp.use(express.static(config.publicPath));
-const server = http.createServer(socketApp);
+app.use(express.static(config.publicPath));
+const server = http.createServer(app);
 const io = socketIO(server);
 
 io.on('connection', (socket) => {
@@ -130,7 +121,7 @@ io.on('connection', (socket) => {
   });
 });
 
-const port = process.env.PORT || 10012;
+const port = process.env.PORT || 10010;
 server.listen(port, () => {
   console.log(`Socket IO server is up on ${port}`);
 });

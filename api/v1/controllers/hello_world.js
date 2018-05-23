@@ -2,7 +2,8 @@ const util = require('util');
 
 function resolveHello(req) {
   return new Promise((resolve) => {
-    const name = req.swagger.params.name.value || 'stranger';
+    req.logger.info(req.params);
+    const name = req.query.name || 'stranger';
     // this sends back a JSON response which is a single string
     resolve(util.format('Hello, %s!', name));
   });

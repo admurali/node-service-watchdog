@@ -25,14 +25,14 @@ describe('controllers', () => {
         request(server)
           .get('/v1/hello')
           .query({
-            name: 'Scott',
+            name: 'Bob',
           })
           .set('Accept', 'application/json')
           .expect(200)
           .end((err, res) => {
             should.not.exist(err);
 
-            res.body.should.eql('Hello, Scott!');
+            res.body.should.eql('Hello, Bob!');
 
             done();
           });
