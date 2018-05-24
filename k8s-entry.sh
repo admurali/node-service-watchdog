@@ -1,2 +1,2 @@
 sleep 5
-node app.js --https
+node app.js

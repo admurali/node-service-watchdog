@@ -3,25 +3,19 @@ const socket = io();
 socket.on('connect', () => {
   console.log('Connected to server');
 
-  socket.emit('createSession', {
-    to: 'adithya@example.com',
-    text: 'Hey. This is Adithya.',
-  });
-
-
-  $('#table').bootstrapTable({
-    columns: [{
-      field: 'pid',
-      title: 'Process #',
-    }, {
-      field: 'cpu',
-      title: 'CPU',
-    }, {
-      field: 'memory',
-      title: 'Memory (MB)',
-    }],
-    data: [],
-  });
+//   $('#table').bootstrapTable({
+//     columns: [{
+//       field: 'pid',
+//       title: 'Process #',
+//     }, {
+//       field: 'cpu',
+//       title: 'CPU',
+//     }, {
+//       field: 'memory',
+//       title: 'Memory (MB)',
+//     }],
+//     data: [],
+//   });
 });
 
 socket.on('disconnect', () => {
@@ -45,9 +39,20 @@ socket.on('status', (stats) => {
     usedCPU += value.cpu;
     usedRam += value.memory;
     value.memory = (value.memory * (1 / 1000000.0)).toFixed(2);
+    if (value.progress) {
+      value.progress = `<div class="progress"><div class="progress-bar" style="width:${value.progress}%">${value.progress}%</div></div>`;
+    } else {
+      value.progress = '<div class="progress"><div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 100%" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div></div>';
+    }
+    if (value.type) {
+      value.type = '';
+    }
     return value.memory;
   });
-  const usedCPUPercentage = (usedCPU * (100.0 / totalCPU)).toFixed(0);
+  let usedCPUPercentage = (usedCPU).toFixed(0);
+  if (usedCPUPercentage > 100) {
+    usedCPUPercentage = 100;
+  }
   $('#used-cpu')[0].className = `circularProgress --${usedCPUPercentage}`;
   $('#used-cpu-overlay').text(`${usedCPUPercentage}% CPU Used`);
 
