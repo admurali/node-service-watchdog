@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Status</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./css/bootstrap.css">
+  <link rel="stylesheet" href="./css/bootstrap-table.css">
+  <script src="./js/jquery-3.2.1.slim.js"></script>
+  <script src="./js/bootstrap.js"></script>
+  <script src="./js/bootstrap-table.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="./js/index.js"></script>
+  <link rel="stylesheet" href="./css/style.css"></script>
+</head>
+<body style="padding-top: 10px; padding-right: 10px; padding-bottom: 5px; padding-left: 10px;">
+<div class="container-fluid">
+  <div class="row">
+    <div class="card" style="width: 100%;">
+        <div class="card-body">
+          <h5 class="card-title">Processing stage</h5>
+	        <div class="row">
+            <div id="used-cpu" class="circularProgress">
+              <div id="used-cpu-overlay" class="circularProgress__overlay"></div>
+            </div>
+            <div id="used-ram" class="circularProgress">
+              <div id="used-ram-overlay" class="circularProgress__overlay"></div>
+            </div>
+            <div id="free-ram" class="circularProgress">
+              <div id="free-ram-overlay" class="circularProgress__overlay"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+  </div>
+  <br />
+  <br />
+  <div class="table-responsive">
+    <table id="table" class="table table-striped"  data-toggle="table">
+      <thead>
+          <tr>
+              <th data-sortable="true" data-field="pid">Process #</th>
+              <th data-sortable="true" data-field="data">File</th>
+              <th data-sortable="true" data-field="type">Type</th>
+              <th data-sortable="true" data-field="cpu">CPU %</th>
+              <th data-sortable="true" data-field="memory">Memory (MB)</th>
+              <th data-field="progress">Progress</th>
+          </tr>
+      </thead>
+  </table>
+  </div>
+  
+</div>
+
+</body>
+</html>

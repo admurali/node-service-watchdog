@@ -1,0 +1,1 @@
+node ./node_modules/pkg/lib-es5/bin.js -t latest-win-x64 -o bin/watchdog.exe app.js
